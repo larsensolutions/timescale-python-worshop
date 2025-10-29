@@ -1,0 +1,38 @@
+services:
+  timescaledb:
+    image: timescale/timescaledb-ha:pg17.6-ts2.22.1
+    restart: always
+    ports:
+      - "5366:5432"
+    environment:
+      POSTGRES_USER: timescaledb
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: timescale
+    volumes:
+      - timescale-data:/home/postgres/pgdata/data
+      - ./postgresql.base.conf:/etc/postgresql.conf:ro
+
+  # Comment out pgadmin service if you don't want to use it
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: always
+    depends_on:
+      - timescaledb
+    ports:
+      - "5050:80" # PgAdmin will be available at http://localhost:5050 after starting the containers
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+
+      PGADMIN_SERVER_JSON_FILE: /pgadmin4/servers.json
+      PGADMIN_REPLACE_SERVERS_ON_STARTUP: "True"
+
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+      - ./pgadmin.servers.json:/pgadmin4/servers.json:ro
+
+volumes:
+  timescale-data:
+  pgadmin-data:

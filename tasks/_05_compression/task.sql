@@ -1,0 +1,2 @@
+-- Place the compression SQL code here
+-- You can enable compression on a hypertable using the add_columnstore_policy (add_compression_policy in old api) function.
